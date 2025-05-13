@@ -38,10 +38,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGitHub = async () => {
     setIsLoading(true);
+    
+    // Determine the base URL for callback
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const baseUrl = `${protocol}//${host}`;
+    
     await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${baseUrl}/auth/callback`,
       },
     });
   };
