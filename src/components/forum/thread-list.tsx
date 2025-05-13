@@ -164,7 +164,7 @@ export function ThreadList() {
   };
   
   return (
-    <div className="p-4">
+    <div className="px-4 pt-2 pb-4">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">
           {selectedCategory === 'All' ? 'Threads' : `${selectedCategory} Threads`}
