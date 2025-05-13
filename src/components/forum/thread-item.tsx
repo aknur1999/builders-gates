@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+"use client";
+
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -75,7 +77,6 @@ export function ThreadItem({
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentCount, setCommentCount] = useState(initialCommentCount);
-  const [isLoadingComments, setIsLoadingComments] = useState(false);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
@@ -88,15 +89,8 @@ export function ThreadItem({
   // Add a ref to keep track of whether we should keep the input visible
   const keepInputVisibleRef = useRef(false);
 
-  // Fetch comments when component mounts
-  useEffect(() => {
-    fetchComments();
-  }, [id]);
-  
   // Function to fetch comments
-  const fetchComments = async () => {
-    setIsLoadingComments(true);
-    
+  const fetchComments = useCallback(async () => {
     try {
       // First fetch the comments
       const { data: commentsData, error: commentsError } = await supabase
@@ -124,7 +118,7 @@ export function ThreadItem({
         const profilesMap = (profilesData || []).reduce((acc, profile) => {
           acc[profile.id] = profile;
           return acc;
-        }, {} as Record<string, any>);
+        }, {} as Record<string, { id: string; username: string; avatar_url?: string }>);
         
         // Combine comment and profile data
         const formattedComments = commentsData.map(comment => {
@@ -155,10 +149,13 @@ export function ThreadItem({
       }
     } catch (error) {
       console.error('Error fetching comments:', error);
-    } finally {
-      setIsLoadingComments(false);
     }
-  };
+  }, [id, commentCount]);
+
+  // Fetch comments when component mounts
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
   
   // Check if user has already voted on this thread when component mounts
   useEffect(() => {
@@ -212,7 +209,7 @@ export function ThreadItem({
     
     try {
       // First check if user has already voted
-      const { data: existingVote, error: checkError } = await supabase
+      const { data: existingVote } = await supabase
         .from('votes')
         .select('id, vote_type')
         .eq('thread_id', id)
@@ -562,7 +559,7 @@ export function ThreadItem({
       // Restore input visibility after submission completes
       setShowCommentInput(true);
     }
-  }, [isSubmittingComment]);
+  }, [isSubmittingComment, showCommentInput]);
 
   // Add a useEffect to update the timestamp periodically
   useEffect(() => {

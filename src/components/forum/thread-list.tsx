@@ -78,19 +78,19 @@ export function ThreadList() {
         // Format threads for display
         const formattedThreads = await Promise.all(data.map(async (thread: Thread) => {
           // Get comment count for each thread
-          const { count: commentCount, error: commentError } = await supabase
+          const { count: commentCount } = await supabase
             .from('comments')
             .select('id', { count: 'exact' })
             .eq('thread_id', thread.id);
           
           // Get vote count for each thread
-          const { count: upvotes, error: upvoteError } = await supabase
+          const { count: upvotes } = await supabase
             .from('votes')
             .select('id', { count: 'exact' })
             .eq('thread_id', thread.id)
             .eq('vote_type', 'up');
             
-          const { count: downvotes, error: downvoteError } = await supabase
+          const { count: downvotes } = await supabase
             .from('votes')
             .select('id', { count: 'exact' })
             .eq('thread_id', thread.id)

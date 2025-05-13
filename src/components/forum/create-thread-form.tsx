@@ -41,7 +41,7 @@ export function CreateThreadForm({ isOpen, onClose, onSuccess }: CreateThreadFor
       const now = new Date().toISOString();
       
       // Insert the thread into the database
-      const { data, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('threads')
         .insert({
           title,

@@ -1,16 +1,16 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Github, User, LogOut, Settings, LayoutGrid, Beer, TrendingUp, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useCategory } from "@/lib/category-context";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import Image from "next/image";
 
 export function Sidebar() {
-  const { user, isLoading, signInWithGitHub, signOut } = useAuth();
+  const { user, signInWithGitHub, signOut } = useAuth();
   const { selectedCategory, setSelectedCategory } = useCategory();
   const [isAuthLoading, setIsAuthLoading] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
@@ -220,7 +220,13 @@ export function Sidebar() {
             <div className="flex items-center gap-3 flex-1">
               <div className="h-10 w-10 bg-amber-200 flex items-center justify-center rounded-full overflow-hidden">
                 {user.user_metadata?.avatar_url ? (
-                  <img src={user.user_metadata.avatar_url} alt={user.user_metadata?.name || 'User'} className="h-full w-full object-cover" />
+                  <Image 
+                    src={user.user_metadata.avatar_url} 
+                    alt={user.user_metadata?.name || 'User'} 
+                    width={40}
+                    height={40}
+                    className="h-full w-full object-cover" 
+                  />
                 ) : (
                   <User className="h-5 w-5 text-amber-800" />
                 )}
